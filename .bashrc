@@ -140,7 +140,7 @@ nvpi(){ nvidia-smi|awk '{if(aa==1){print $0;aa=2;}}$2=="'$1'"{print $0;if(aa==0)
 nvrp(){ nvidia-smi |awk 'v==2&&$0~/^\|/{print $0}$0=="|=============================================================================|"{v=2}';}
 nvrid(){ nvidia-smi |awk 'v==2&&$0~/^\|/{print $0}$0=="|=============================================================================|"{v=2}'|awk '{print $2}';}
 nvfreeid(){ nvidia-smi |awk 'v==2&&$0~/^\|/{print $0}$0=="|=============================================================================|"{v=2}'|awk '{r[$2]=1}END{for(i=0;i<=15;i+=1    )if(r[i]!=1)print i}';}
-cudapy(){ CUDA_VISIBLE_DEVICES=$1 python $2; }
+cudapy(){ DEVICE_ID=$1; FILENAME=$2; shift; shift; CUDA_VISIBLE_DEVICES=$DEVICE_ID python $FILENAME $@; }
 
 #DEEPLEARNING LIBRARY INFORMATION
 show_dnn () {
