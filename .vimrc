@@ -3,7 +3,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Sets how many lines of history VIM has to remember
 set history=500
-
+set mouse=a
 " Enable filetype plugins
 filetype plugin on
 filetype indent on
@@ -21,7 +21,7 @@ nmap <leader>w :w!<cr>
 
 " :W sudo saves the file 
 " (useful for handling the permission-denied error)
-command W w !sudo tee % > /dev/null
+" command W w !sudo tee % > /dev/null
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Vundle set up
@@ -30,24 +30,23 @@ set nocompatible
 filetype off
 
 set rtp+=~/.vim/bundle/Vundle.vim
-"call vundle#begin()
+call vundle#begin()
 
-"Plugin 'VundleVim/Vundle.vim'
-"Plugin 'Valloric/YouCompleteMe'
-"Plugin 'ctrlpvim/ctrlp.vim'
-"Plugin 'scrooloose/nerdtree'
-"Plugin 'Raimondi/delimitMate'
-"Plugin 'scrooloose/syntastic'
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'Valloric/YouCompleteMe'
+Plugin 'ctrlpvim/ctrlp.vim'
+Plugin 'scrooloose/nerdtree'
+Plugin 'Raimondi/delimitMate'
+Plugin 'scrooloose/syntastic'
 "Plugin 'powerline/powerline'
-"Plugin 'davidhalter/jedi-vim'
-"Plugin 'tpope/vim-fugitive':
+Plugin 'tpope/vim-fugitive'
 "Plugin 'L9'
 "Plugin 'git://git.wincent.com/command-t.git'
 "Plugin 'file:///home/gmarik/path/to/plugin'
 "Plugin 'rstacruz/sparkup', {'rtp':'vim/'}
 "Plugin 'ascenator/L9', {'name':'newL9'}
 
-"call vundle#end()
+call vundle#end()
 filetype plugin indent on
 
 " Make some plugin map here
@@ -62,7 +61,7 @@ let g:syntastic_auto_loc_list=1
 let g:syntastic_check_on_open=1
 let g:syntastic_check_on_wq=0
 let g:syntastic_python_checker=['pylint']
-let g:syntastic_python_python_exec='/usr/local/bin/python3'
+let g:syntastic_python_python_exec='/usr/bin/python3.6'
 nnoremap <C-c> :SyntasticCheck<CR>
 " powerline
 let g:Powerline_symbols='fancy'
@@ -215,8 +214,8 @@ vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 " => Moving around, tabs, windows and buffers
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Map <Space> to / (search) and Ctrl-<Space> to ? (backwards search)
-map <space> /
-map <c-space> ?
+noremap <space> /
+noremap <c-space> ?
 
 " Disable highlight when <leader><cr> is pressed
 map <silent> <leader><cr> :noh<cr>
@@ -241,7 +240,11 @@ map <leader>tn :tabnew<cr>
 map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
-map <leader>tx :tabnext<cr> 
+
+" Press Ctrl-Tab to switch between open tabs (like browser tabs) to 
+" the right side. Ctrl-Shift-Tab goes the other way.
+noremap <leader><Tab> :tabnext<cr>
+noremap <leader><S-Tab> :tabprev<cr>
 
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
@@ -251,7 +254,10 @@ au TabLeave * let g:lasttab = tabpagenr()
 
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
-map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
+map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/<cr>
+" Opens a new tab to edit .vimrc file and reload it
+map <leader>rc :tabedit $HOME/.vimrc<cr>
+map <leader>rr :source $HOME/.vimrc<cr>
 
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
@@ -274,14 +280,22 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 set laststatus=2
 
 " Format the status line
-set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+set statusline=
+set statusline+=%1*\ [%n]\ %*
+set statusline+=%2*\ %{HasPaste()}%f\ %w
+set statusline+=%3*\ CWD:\ %.30{getcwd()}\ %* 
+set statusline+=%4*\ TYPE:\ %y\ %*
+set statusline+=%5*\ %{''.(&fenc!=''?&fenc:&enc).''}\ %*
+set statusline+=%6*\ %=Line:\ %l/%L\ (%p%%)\ %*
+set statusline+=%7*\ Column:\ %c\ %*
+set statusline+=%8*\ \ %3m%r%w
 
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""r""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""r
 " Remap VIM 0 to first non-blank character
-map 0 ^
+map 0 :
 
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
 nmap <M-j> mz:m+<cr>`z
@@ -294,6 +308,21 @@ if has("mac") || has("macunix")
   nmap <D-k> <M-k>
   vmap <D-j> <M-j>
   vmap <D-k> <M-k>
+endif
+
+if has("gui_macvim")
+  " Switch to specific tab numbers with Command-number
+  noremap <D-1> :tabn 1<CR>
+  noremap <D-2> :tabn 2<CR>
+  noremap <D-3> :tabn 3<CR>
+  noremap <D-4> :tabn 4<CR>
+  noremap <D-5> :tabn 5<CR>
+  noremap <D-6> :tabn 6<CR>
+  noremap <D-7> :tabn 7<CR>
+  noremap <D-8> :tabn 8<CR>
+  noremap <D-9> :tabn 9<CR>
+  " Command-0 goes to the last tab
+  noremap <D-0> :tablast<CR>
 endif
 
 " Delete trailing white space on save, useful for Python and CoffeeScript ;)
@@ -423,21 +452,17 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
-" Make VIM remember position in file after reopen
-" if has("autocmd")
-"   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-"endif
 
 """""""""""""""""""""""""""""
 " => Cpp section
 """""""""""""""""""""""""""""
-"let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py'
 
 """"""""""""""""""""""""""""""
 " => Python section
 """"""""""""""""""""""""""""""
 let python_highlight_all = 1
-let g:ycm_python_binary_path='/usr/local/bin/python3'
+let g:ycm_python_binary_path='/usr/bin/python3.6'
 au FileType python syn keyword pythonDecorator True None False self
 
 au BufNewFile,BufRead *.jinja set syntax=htmljinja
@@ -445,14 +470,14 @@ au BufNewFile,BufRead *.mako set ft=mako
 
 au FileType python map <buffer> F :set foldmethod=indent<cr>
 au FileType python nnoremap <buffer> <F9> :exec '!python3' shellescape(@%,1)<cr>
-au FileType python inoremap <buffer> $r return 
-au FileType python inoremap <buffer> $i import 
-au FileType python inoremap <buffer> $p print 
-au FileType python inoremap <buffer> $f #--- <esc>a
-au FileType python map <buffer> <leader>1 /class 
-au FileType python map <buffer> <leader>2 /def 
-au FileType python map <buffer> <leader>C ?class 
-au FileType python map <buffer> <leader>D ?def 
+"au FileType python inoremap <buffer> $r return 
+"au FileType python inoremap <buffer> $i import 
+"au FileType python inoremap <buffer> $p print 
+"au FileType python inoremap <buffer> $f #--- <esc>a
+"au FileType python map <buffer> <leader>1 /class 
+"au FileType python map <buffer> <leader>2 /def 
+"au FileType python map <buffer> <leader>C ?class 
+"au FileType python map <buffer> <leader>D ?def 
 au FileType python set cindent
 au FileType python set cinkeys-=0#
 au FileType python set indentkeys-=0#
@@ -465,8 +490,8 @@ au FileType javascript call JavaScriptFold()
 au FileType javascript setl fen
 au FileType javascript setl nocindent
 
-au FileType javascript imap <c-t> $log();<esc>hi
-au FileType javascript imap <c-a> alert();<esc>hi
+"au FileType javascript imap <c-t> $log();<esc>hi
+"au FileType javascript imap <c-a> alert();<esc>hi
 
 au FileType javascript inoremap <buffer> $r return 
 au FileType javascript inoremap <buffer> $f //--- PH<esc>FP2xi
