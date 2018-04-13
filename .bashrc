@@ -160,6 +160,7 @@ show_dnn () {
 
 # added by Anaconda3 4.4.0 installer
 export PATH="/home/xiaoyong/tmux/bin:/home/xiaoyong/anaconda3/bin:$PATH"
-alias tf="source activate tf"
+alias act="source activate"
 alias da="source deactivate"
-alias jpt="jupyter notebook"
+alias jn="jupyter notebook"
+alias jl='jupyter lab'
