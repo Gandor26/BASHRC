@@ -151,7 +151,7 @@ show_dnn () {
     echo "PYTORCH_VERSION: $TORCH_VERSION"
   fi
   # tensorflow
-  TENSORFLOW_VERSION=$(python -c "import pkg_resources; print(pkg_resources.get_distribution('tensorflow-gpu').version)" 2>/dev/null)
+  TENSORFLOW_VERSION=$(python -c "import pkg_resources; print(pkg_resources.get_distribution('tensorflow').version)" 2>/dev/null)
   if [ ! -z $TENSORFLOW_VERSION ]; then
     echo "TENSORFLOW_VERSION: $TENSORFLOW_VERSION"
   fi
